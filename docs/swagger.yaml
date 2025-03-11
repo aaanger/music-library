@@ -1,0 +1,224 @@
+basePath: /api/v1
+definitions:
+  dto.AddSongReq:
+    properties:
+      group:
+        type: string
+      song:
+        type: string
+    required:
+    - group
+    - song
+    type: object
+  dto.UpdateSongReq:
+    properties:
+      group:
+        type: string
+      link:
+        type: string
+      releaseDate:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    type: object
+  model.Song:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      link:
+        type: string
+      release_date:
+        type: string
+      song:
+        type: string
+      text:
+        type: string
+    required:
+    - group
+    - song
+    type: object
+  model.Verse:
+    properties:
+      lyrics:
+        type: string
+      number:
+        type: integer
+    type: object
+info:
+  contact: {}
+  description: Swagger API для бибилотеки песен
+  title: Онлайн библиотека песен
+  version: "1.0"
+paths:
+  /api/v1/{songID}:
+    delete:
+      parameters:
+      - description: ID песни
+        in: path
+        name: songID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Песня удалена
+          schema:
+            type: string
+        "400":
+          description: Неверный ID песни
+          schema:
+            type: string
+        "500":
+          description: Ошибка удаления песни
+          schema:
+            type: string
+      summary: Удаление песни
+      tags:
+      - Songs
+    put:
+      parameters:
+      - description: ID песни
+        in: path
+        name: songID
+        required: true
+        type: integer
+      - description: Данные для изменения
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateSongReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные песни изменены
+          schema:
+            type: string
+        "400":
+          description: Неверное тело запроса или ID песни
+          schema:
+            type: string
+        "500":
+          description: Ошибка изменения песни на сервере
+          schema:
+            type: string
+      summary: Изменение данных песни
+      tags:
+      - Songs
+  /api/v1/{songID}/lyrics:
+    get:
+      parameters:
+      - description: ID песни
+        in: path
+        name: songID
+        required: true
+        type: integer
+      - default: 3
+        description: количество куплетов на странице
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: номер страницы
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Verse'
+            type: array
+        "400":
+          description: Неверный ID песни или некорректные параметры пагинации
+          schema:
+            type: string
+        "500":
+          description: Ошибка получения текста песни
+          schema:
+            type: string
+      summary: Получение текста песни с пагинацией по куплетам
+      tags:
+      - Songs
+  /api/v1/add:
+    post:
+      parameters:
+      - description: Данные для добавления песни
+        in: body
+        name: song
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AddSongReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Данные песни
+          schema:
+            $ref: '#/definitions/model.Song'
+        "400":
+          description: Неверное тело запроса
+          schema:
+            type: string
+        "500":
+          description: Ошибка добавления песни на сервере
+          schema:
+            type: string
+      summary: Добавление новой песни
+      tags:
+      - Songs
+  /api/v1/songs:
+    get:
+      parameters:
+      - description: Фильтр по названию песни
+        in: query
+        name: song
+        type: string
+      - description: Фильтр по названию исполнителя
+        in: query
+        name: group
+        type: string
+      - description: Фильтр по дате выпуска
+        in: query
+        name: release_date
+        type: integer
+      - default: 10
+        description: Количество песен на странице
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Номер страницы
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Song'
+            type: array
+        "400":
+          description: Некорректный фильтр или параметры пагинации
+          schema:
+            type: string
+        "500":
+          description: Ошибка получения данных
+          schema:
+            type: string
+      summary: Получение данных библиотеки с фильтрацией по всем полям и пагинацией
+      tags:
+      - Songs
+swagger: "2.0"
