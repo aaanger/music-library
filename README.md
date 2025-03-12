@@ -3,6 +3,7 @@
 - ```make run``` запуск приложения
 
 ### Пример .env файла
+```
 PSQL_HOST=
 PSQL_PORT=
 PSQL_USER=
@@ -13,3 +14,4 @@ PSQL_SSLMODE=disable
 PORT=
 
 API_URL=
+```
